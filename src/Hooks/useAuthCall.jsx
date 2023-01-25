@@ -17,9 +17,21 @@ const useAuthCall = () => {
             dispatch(fetchFail());
             
         }
+        };
+
+        const logout = async () => {
+            dispatch(fetchStart());
+            try {
+              await axios.post(`${BASE_URL}account/auth/logout/`);
+              dispatch(logoutSuccess());
+            } catch (error) {
+              console.log(error);
+              dispatch(fetchFail());
+            }
+          };
+        
+          return { login, logout };
     
-    };
-  return {login};
 }
 
 export default useAuthCall
