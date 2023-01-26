@@ -1,6 +1,8 @@
 import axios from "axios"
 import { fetchFail, fetchStart, loginSuccess, logoutSuccess, registerSuccess } from "../features/authSlice";
 import { useDispatch } from "react-redux";
+import { toastErrorNotify, toastSuccessNotify } from "../helper/ToastNotify";
+import { Navigate } from "react-router-dom";
 
 const BASE_URL="https://clarusway.pythonanywhere.com/";
 
@@ -34,14 +36,18 @@ const useAuthCall = () => {
           const register = async (userInfo) => {
             try {
                 dispatch(fetchStart());
-                const {data} = await axios.post(`${BASE_URL}account/auth/register/`, userInfo);
+                const {data} = await axios.post(`${BASE_URL}account/register/`, userInfo);
                 dispatch(registerSuccess(data));
+                toastSuccessNotify("Register performed");
+                Navigate("/stock");
                 
             } catch (error) {
                 console.log(error)
                 dispatch(fetchFail());
+                toastErrorNotify("Register can not be performed");
+              }
                 
-            }
+            
             };
         
           return { login, logout, register };

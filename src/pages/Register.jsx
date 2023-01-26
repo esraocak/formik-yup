@@ -15,6 +15,15 @@ import * as yup from "yup";
 import useAuthCall from "../Hooks/useAuthCall";
 
 const registerSchema = yup.object().shape({
+  username: yup.string()
+    .max(10, "username must have less than 10 chars")
+    .required(),
+  first_name: yup.string()
+    .max(20, "first name must have less than 20 chars")
+    .required(),
+  last_name: yup.string()
+    .max(20, "last name must have less than 20 chars")
+    .required(),
   email: yup
     .string()
     .email("Please enter valid email")
@@ -32,7 +41,8 @@ const registerSchema = yup.object().shape({
 
 const Register = () => {
   const navigate = useNavigate();
-  const { currentUser, error, loading } = useSelector((state) => state.auth);
+  const {loading } = useSelector((state) => state?.auth);
+  
   const {register} = useAuthCall ();
 
 
@@ -75,16 +85,20 @@ const Register = () => {
           </Typography>
 
           <Formik
-          initialValues={{username:"",email:"",password:""}}
+          initialValues={{username: "",
+          first_name: "",
+          last_name: "",
+          email: "",
+          password: "",}}
           validationSchema={registerSchema}
           onSubmit={(values , actions )=> {
-            register(values);
+            register({ ...values, password2: values.password });
             navigate("/stock");
             actions.resetForm();
             actions.setSubmitting(false);
           }}
           >
-          {({values, isSubmitting, handleChange, handleBlur, touched, errors}) => (
+          {({values, handleChange, handleBlur, touched, errors}) => (
             <Form> 
               <Box sx={{display:"flex", flexDirection:"column", gap:2}}>
 
@@ -92,13 +106,39 @@ const Register = () => {
                 label="Username"
                 name="username"
                 id="username"
-                type="string"
+                type="text"
                 variant="outlined"
                 value={values.username}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 error={touched.username && Boolean(errors.username)}
                 helperText={touched.username && errors.username}/>
+
+              <TextField
+                label="First Name"
+                name="first_name"
+                id="firstName"
+                type="text"
+                variant="outlined"
+                value={values.first_name}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                helperText={touched.first_name && errors.first_name}
+                error={touched.first_name && Boolean(errors.first_name)}
+              />
+
+              <TextField
+                label="Last Name"
+                name="last_name"
+                id="last_name"
+                type="text"
+                variant="outlined"
+                value={values.last_name}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                helperText={touched.last_name && errors.last_name}
+                error={touched.last_name && Boolean(errors.last_name)}
+              />    
 
                 <TextField
                 label="Email"
